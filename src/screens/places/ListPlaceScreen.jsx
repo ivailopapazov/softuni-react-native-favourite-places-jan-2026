@@ -10,7 +10,7 @@ export default function ListPlaceScreen({ navigation }) {
             <FlatList
                 data={places}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <PlaceCard {...item} />}
+                renderItem={({ item }) => <PlaceCard {...item} onPress={() => navigation.navigate('PlaceDetails', { place: item })} />}
             />
 
             <TouchableOpacity

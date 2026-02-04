@@ -3,7 +3,8 @@ import { placeService } from "../../services/index.js";
 
 export const PlaceContext = createContext({
     places: [],
-    createPlace: async (placeData) => { },
+    async createPlace(placeData) { },
+    getPlaceById(placeId) { },
 });
 
 export function PlaceProvider({ children }) {
@@ -25,9 +26,14 @@ export function PlaceProvider({ children }) {
         }
     };
 
+    const getPlaceById = (placeId) => {
+        return places.find(p => p.id === placeId);
+    }
+
     const contextValue = {
         places,
         createPlace,
+        getPlaceById,
     };
 
     return (

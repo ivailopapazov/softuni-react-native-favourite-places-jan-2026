@@ -11,3 +11,9 @@ export async function create(placeData) {
 
     return result.data;
 }
+
+export async function getById(placeId) {
+    const result = await api.get(`/places/${placeId}`);
+
+    return result.data;
+}
