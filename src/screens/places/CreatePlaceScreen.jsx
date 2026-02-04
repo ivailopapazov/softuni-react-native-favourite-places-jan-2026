@@ -11,14 +11,16 @@ import { Ionicons } from '@expo/vector-icons';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { usePlace } from '../../contexts/places/usePlaces.js';
+import ImagePicker from '../../components/ImagePicker.jsx';
 
 export function CreatePlaceScreen({ navigation }) {
     const { createPlace } = usePlace();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [imageUri, setImageUri] = useState(null);
 
     const savePlaceHandler = async () => {
-        await createPlace({ title, description });
+        await createPlace({ title, description, imageUri });
 
         navigation.goBack();
     };
@@ -40,6 +42,7 @@ export function CreatePlaceScreen({ navigation }) {
                     <Text style={styles.sectionTitle}>Photo</Text>
                     {/* TODO ImagePicker  */}
                     {/* TODO CameraCapture */}
+                    <ImagePicker onImagePicked={setImageUri} imageUri={imageUri} />
                 </View>
 
                 <View style={styles.section}>
