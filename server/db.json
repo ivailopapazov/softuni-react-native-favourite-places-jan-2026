@@ -46,6 +46,12 @@
       "description": "gagag",
       "imageUri": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/981b4e37-064e-4094-89cc-23485c992379.jpeg",
       "id": 5
+    },
+    {
+      "title": "asdhs",
+      "description": "baba",
+      "imageUri": "file:///var/mobile/Containers/Data/Application/7F965A13-02E9-4639-B44C-343CA4B66E49/Library/Caches/ExponentExperienceData/@anonymous/softuni-react-native-favourite-places-jan-2026-0fc5b575-e9aa-4366-afce-8ccd2575a082/ImagePicker/242AA800-CB26-4753-A93D-0B71AA5AE966.jpg",
+      "id": 6
     }
   ]
 }

@@ -3,10 +3,11 @@ import {
     Text,
     StyleSheet,
     ScrollView,
-
+    Image,
     Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Sharing from 'expo-sharing';
 import Button from '../../components/Button';
 
 const { width } = Dimensions.get('window');
@@ -20,7 +21,10 @@ const PlaceDetailsScreen = ({ route, navigation }) => {
             {/* TODO: Show image */}
 
             <View style={styles.imagePlaceholder}>
-                <Ionicons name="image-outline" size={64} color="#cbd5e1" />
+                {place.imageUri
+                    ? <Image source={{ uri: place.imageUri }} style={styles.image} />
+                    : <Ionicons name="image-outline" size={64} color="#cbd5e1" />
+                }
             </View>
 
             <View style={styles.content}>
@@ -51,6 +55,13 @@ const PlaceDetailsScreen = ({ route, navigation }) => {
                     <Button
                         title="Share Place"
                         icon={<Ionicons name="share-outline" size={20} color="#fff" />}
+                        onPress={() => {
+                            Sharing.shareAsync(place.imageUri, {
+                                mimeType: 'image/jpeg', // Android
+                                UTI: 'public.jpeg', // iOS
+                                dialogTitle: 'Share Place Image',
+                            });
+                        }}
                     />
                 </View>
 
