@@ -2,7 +2,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const PlaceCard = ({
-    imageUrl,
+    imageUri,
     title,
     address,
     onPress,
@@ -10,8 +10,8 @@ const PlaceCard = ({
     return (
         <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
             <View style={styles.imageContainer}>
-                {imageUrl ? (
-                    <Image source={{ uri: imageUrl }} style={styles.image} />
+                {imageUri ? (
+                    <Image source={{ uri: imageUri }} style={styles.image} />
                 ) : (
                     <View style={styles.imagePlaceholder}>
                         <Ionicons name="image-outline" size={40} color="#cbd5e1" />
