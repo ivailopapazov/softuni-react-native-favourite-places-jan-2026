@@ -73,10 +73,12 @@ export function CreatePlaceScreen({ navigation }) {
                     <LocationPicker onLocationPicked={setAddress} />
 
                     {/* Address preview */}
-                    {/* <View style={styles.addressPreview}>
-              <Ionicons name="location" size={16} color="#6366f1" />
-              <Text style={styles.addressText}>address</Text>
-            </View>*/}
+                    {address && (
+                        <View style={styles.addressPreview}>
+                            <Ionicons name="location" size={16} color="#6366f1" />
+                            <Text style={styles.addressText}>{address}</Text>
+                        </View>
+                    )}
                 </View>
 
                 <Button
