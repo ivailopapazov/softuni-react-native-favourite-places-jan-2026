@@ -17,12 +17,13 @@ import LocationPicker from '../../components/LocationPicker.jsx';
 
 export function CreatePlaceScreen({ navigation }) {
     const { createPlace } = usePlace();
+    const [address, setAddress] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [imageUri, setImageUri] = useState(null);
 
     const savePlaceHandler = async () => {
-        await createPlace({ title, description, imageUri });
+        await createPlace({ title, description, imageUri, address });
 
         navigation.goBack();
     };
@@ -69,7 +70,7 @@ export function CreatePlaceScreen({ navigation }) {
 
                     {/* <Text style={styles.errorText}>Location error</Text> */}
 
-                    <LocationPicker />
+                    <LocationPicker onLocationPicked={setAddress} />
 
                     {/* Address preview */}
                     {/* <View style={styles.addressPreview}>

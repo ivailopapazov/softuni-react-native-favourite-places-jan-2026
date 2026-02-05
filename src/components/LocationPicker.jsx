@@ -1,8 +1,10 @@
 import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, } from "react-native";
-import { getCurrentPositionAsync, Accuracy, useForegroundPermissions } from 'expo-location';
+import { getCurrentPositionAsync, Accuracy, useForegroundPermissions, reverseGeocodeAsync } from 'expo-location';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function LocationPicker() {
+export default function LocationPicker({
+    onLocationPicked,
+}) {
     const [status, requestPermission] = useForegroundPermissions();
 
     if (!status) {
@@ -21,12 +23,34 @@ export default function LocationPicker() {
         );
     }
 
+    const getAddressFromCoords = async (coords) => {
+        try {
+            const addresses = await reverseGeocodeAsync(coords);
+            if (addresses.length > 0) {
+                const addr = addresses[0];
+                const addressString = [
+                    addr.name,
+                    addr.street,
+                    addr.city,
+                    addr.region,
+                    addr.country,
+                ].filter(Boolean).join(', ');
+
+                return addressString;
+            }
+        } catch (error) {
+            console.error('Geocoding error:', error);
+        }
+    };
+
     const getCurrentLocationHandler = async () => {
         const result = await getCurrentPositionAsync({
             accuracy: Accuracy.Highest,
         });
 
-        console.log(result);
+        const address = await getAddressFromCoords(result.coords);
+        
+        onLocationPicked(address); 
     }
 
     return (
