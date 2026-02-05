@@ -12,6 +12,7 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { usePlace } from '../../contexts/places/usePlaces.js';
 import ImagePicker from '../../components/ImagePicker.jsx';
+import CameraCapture from '../../components/CameraCapture.jsx';
 
 export function CreatePlaceScreen({ navigation }) {
     const { createPlace } = usePlace();
@@ -41,8 +42,8 @@ export function CreatePlaceScreen({ navigation }) {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Photo</Text>
                     {/* TODO ImagePicker  */}
-                    {/* TODO CameraCapture */}
                     <ImagePicker onImagePicked={setImageUri} imageUri={imageUri} />
+                    <CameraCapture onPhotoTaken={setImageUri} />
                 </View>
 
                 <View style={styles.section}>
