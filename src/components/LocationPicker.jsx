@@ -1,9 +1,12 @@
+// import { AppleMaps, GoogleMaps, useLocationPermissions } from 'expo-maps';
 import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, } from "react-native";
 import { getCurrentPositionAsync, Accuracy, useForegroundPermissions, reverseGeocodeAsync } from 'expo-location';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function LocationPicker({
     onLocationPicked,
+    onCoordsPicked,
+    coords,
 }) {
     const [status, requestPermission] = useForegroundPermissions();
 
@@ -49,13 +52,32 @@ export default function LocationPicker({
         });
 
         const address = await getAddressFromCoords(result.coords);
-        
-        onLocationPicked(address); 
-    }
+
+        onCoordsPicked(result.coords);
+        onLocationPicked(address);
+    };
+
+    // const mapPressedHandler = async (event) => {
+    //     console.log(event);
+
+    //     const { latitude, longitude } = event.nativeEvent.coordinate;
+
+    //     const address = await getAddressFromCoords({ latitude, longitude });
+    //     onCoordsPicked({ latitude, longitude });
+    //     onLocationPicked(address);
+    // };
 
     return (
         <View style={styles.container}>
             <View style={styles.mapContainer}>
+                {/* <GoogleMaps.View
+                    style={styles.map}
+                    initialCamera={{
+                        center: { latitude: 37.78825, longitude: -122.4324 },
+                    }}
+                    onPress={mapPressedHandler}
+                /> */}
+
                 <View style={styles.mapOverlay}>
                     <Text style={styles.overlayText}>Map preview will appear here</Text>
                 </View>
@@ -68,7 +90,6 @@ export default function LocationPicker({
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
