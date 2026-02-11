@@ -59,6 +59,14 @@
       "imageUri": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/b308c039-7d3c-4641-9b45-5d4d4f843773.jpeg",
       "address": "10, ulitsa \"Professor Petar Nikov\", Sofia, Sofia City Province, Bulgaria",
       "id": 7
+    },
+    {
+      "title": "Dirty Keyboard",
+      "description": "vshshs",
+      "imageUri": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/c33d56bf-854e-4643-bdfa-cf93e1be3b8c.jpeg",
+      "address": "",
+      "coords": {},
+      "id": 8
     }
   ]
 }

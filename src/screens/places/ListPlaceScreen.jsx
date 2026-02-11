@@ -2,15 +2,24 @@ import { TouchableOpacity, StyleSheet, View, FlatList } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { usePlace } from "../../contexts/places/usePlaces.js";
 import PlaceCard from "../../components/PlaceCard.jsx";
+import { GestureDetector, Directions } from "react-native-gesture-handler";
 
 export default function ListPlaceScreen({ navigation }) {
     const { places } = usePlace();
+
+    const flingGesture = Gesture.Fling()
+        .direction([Directions.LEFT])
+    
     return (
         <View style={styles.container}>
             <FlatList
                 data={places}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <PlaceCard {...item} onPress={() => navigation.navigate('PlaceDetails', { place: item })} />}
+                renderItem={({ item }) => (
+                    <GestureDetector gesture={flingGesture}>
+                        <PlaceCard {...item} onPress={() => navigation.navigate('PlaceDetails', { place: item })} />
+                    </GestureDetector>
+                )}
             />
 
             <TouchableOpacity
