@@ -1,6 +1,7 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated from 'react-native-reanimated';
+import { useRef, useEffect } from 'react';
 
 const PlaceCard = ({
     imageUri,
@@ -9,6 +10,14 @@ const PlaceCard = ({
     // onPress,
     style = {},
 }) => {
+    // const ref = useRef();
+
+    // useEffect(() => {
+    //     ref.current.measure((x, y, width, height, pageX, pageY) => {
+    //         console.log('Measured:', { x, y, width, height, pageX, pageY });
+    //     })
+    // }, []);
+
     return (
         <Animated.View style={[styles.container, style]}>
             <View style={styles.imageContainer}>

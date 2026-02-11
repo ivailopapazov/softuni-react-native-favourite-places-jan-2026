@@ -1,23 +1,45 @@
-import { TouchableOpacity, StyleSheet, View, FlatList } from "react-native";
+import { TouchableOpacity, StyleSheet, View, FlatList, Text } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { usePlace } from "../../contexts/places/usePlaces.js";
 import PlaceCard from "../../components/PlaceCard.jsx";
 import { GestureDetector, Gesture, } from "react-native-gesture-handler";
-import { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from 'react-native-worklets'
 import { selectionAsync } from 'expo-haptics';
 
+const CART_ITEM_HEIGHT = 105;
+
 const PlaceCardWithGesture = ({
     item,
+    index,
     onPress,
     onDelete,
+    onSort,
 }) => {
     const positionX = useSharedValue(0);
     const positionY = useSharedValue(0);
+    const scale = useSharedValue(1);
 
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ translateX: positionX.value }, { translateY: positionY.value }],
-    }));
+    const animatedStyle = useAnimatedStyle(() => {
+        const isSelected = scale.value > 1;
+
+        return {
+            transform: [
+                { translateX: positionX.value },
+                { translateY: positionY.value },
+                { scale: scale.value }
+            ],
+            zIndex: isSelected ? 1 : 0,
+        };
+    });
+
+    const trashOpacity = useAnimatedStyle(() => {
+        const opacity = (-positionX.value - 50) / 300;
+
+        return {
+            opacity: Math.min(Math.max(opacity, 0), 1),
+        };
+    });
 
     const deleteGesture = Gesture.Pan()
         .activeOffsetX(-20)
@@ -37,40 +59,62 @@ const PlaceCardWithGesture = ({
         .activateAfterLongPress(500)
         .onStart(() => {
             scheduleOnRN(selectionAsync);
+            scale.value = 1.05;
         })
         .onUpdate((event) => {
             positionY.value = event.translationY;
+
+            const currentOffset = index * CART_ITEM_HEIGHT + event.translationY;
+            const newIndex = Math.round(currentOffset / CART_ITEM_HEIGHT);
+
+            if (newIndex !== index) {
+                scheduleOnRN(onSort, item.id, newIndex);
+            }
         })
         .onEnd(() => {
             positionY.value = 0;
+            scale.value = 1;
         });
 
-    const combinedGesture = Gesture.Race(deleteGesture, sortGesture);
+    const tapGesture = Gesture.Tap()
+        .onEnd(() => {
+            scheduleOnRN(onPress);
+        });
+
+    const combinedGesture = Gesture.Race(deleteGesture, sortGesture, tapGesture);
 
     return (
         <GestureDetector gesture={combinedGesture}>
-            <PlaceCard
-                {...item}
-                style={animatedStyle}
-                onPress={onPress}
-            />
+            <View>
+                <PlaceCard
+                    {...item}
+                    style={[animatedStyle,]}
+                    onPress={onPress}
+                />
+
+                <Animated.View style={[trashOpacity, { position: 'absolute', zIndex: -1, right: 20, top: 15, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fee2e2', borderRadius: 20, padding: 8 }]}>
+                    <Ionicons name="trash-outline" size={60} color="#b40000" />
+                </Animated.View>
+            </View>
         </GestureDetector>
     );
 }
 
 export default function ListPlaceScreen({ navigation }) {
-    const { places, deletePlace } = usePlace();
+    const { places, deletePlace, sortPlace } = usePlace();
 
     return (
         <View style={styles.container}>
             <FlatList
                 data={places}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) =>
+                renderItem={({ item, index }) =>
                     <PlaceCardWithGesture
                         item={item}
+                        index={index}
                         onPress={() => navigation.navigate('PlaceDetails', { place: item })}
                         onDelete={deletePlace}
+                        onSort={sortPlace}
                     />
                 }
             />

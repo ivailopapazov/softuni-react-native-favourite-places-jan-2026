@@ -6,6 +6,7 @@ export const PlaceContext = createContext({
     async createPlace(placeData) { },
     getPlaceById(placeId) { },
     deletePlace(placeId) { },
+    sortPlace(placeId, newIndex) { },
 });
 
 export function PlaceProvider({ children }) {
@@ -40,11 +41,31 @@ export function PlaceProvider({ children }) {
         }
     }
 
+    const sortPlace = (placeId, newIndex) => {
+        setPlaces((oldPlaces) => {
+            const index = oldPlaces.findIndex(place => place.id === placeId);
+
+            if (index === -1) return oldPlaces;
+
+            if (newIndex < 0 || newIndex >= oldPlaces.length) return oldPlaces;
+
+            const updatedPlaces = [
+                ...oldPlaces.slice(0, index),
+                ...oldPlaces.slice(index + 1),
+            ];
+
+            updatedPlaces.splice(newIndex, 0, oldPlaces[index]);
+
+            return updatedPlaces;
+        });
+    };
+
     const contextValue = {
         places,
         createPlace,
         getPlaceById,
         deletePlace,
+        sortPlace,
     };
 
     return (
