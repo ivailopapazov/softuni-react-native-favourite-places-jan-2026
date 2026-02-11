@@ -2,22 +2,54 @@ import { TouchableOpacity, StyleSheet, View, FlatList } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { usePlace } from "../../contexts/places/usePlaces.js";
 import PlaceCard from "../../components/PlaceCard.jsx";
-import { GestureDetector, Directions, Gesture } from "react-native-gesture-handler";
+import { GestureDetector, Gesture, } from "react-native-gesture-handler";
+import { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import { scheduleOnRN } from 'react-native-worklets'
 
 const PlaceCardWithGesture = ({
     item,
     onPress,
     onDelete,
 }) => {
-    const deleteGesture = Gesture.Fling()
-        .direction(Directions.LEFT)
+    const positionX = useSharedValue(0);
+    const positionY = useSharedValue(0);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateX: positionX.value }, { translateY: positionY.value }],
+    }));
+
+    const deleteGesture = Gesture.Pan()
+        .activeOffsetX(-20)
+        .onUpdate((event) => {
+            positionX.value = event.translationX;
+        })
         .onEnd((event) => {
-            onDelete?.(item.id);
+            if (event.translationX < -100) {
+                return scheduleOnRN(onDelete, item.id);
+            }
+
+            positionX.value = 0;
         });
 
+    const sortGesture = Gesture.Pan()
+        // .activeOffsetY([-20, 20])
+        .activateAfterLongPress(500)
+        .onUpdate((event) => {
+            positionY.value = event.translationY;
+        })
+        .onEnd(() => {
+            positionY.value = 0;
+        });
+
+    const combinedGesture = Gesture.Race(deleteGesture, sortGesture);
+
     return (
-        <GestureDetector gesture={deleteGesture} >
-            <PlaceCard {...item} onPress={onPress} />
+        <GestureDetector gesture={combinedGesture}>
+            <PlaceCard
+                {...item}
+                style={animatedStyle}
+                onPress={onPress}
+            />
         </GestureDetector>
     );
 }

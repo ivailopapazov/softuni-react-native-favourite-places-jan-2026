@@ -1,14 +1,16 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Animated from 'react-native-reanimated';
 
 const PlaceCard = ({
     imageUri,
     title,
     address,
-    onPress,
+    // onPress,
+    style = {},
 }) => {
     return (
-        <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
+        <Animated.View style={[styles.container, style]}>
             <View style={styles.imageContainer}>
                 {imageUri ? (
                     <Image source={{ uri: imageUri }} style={styles.image} />
@@ -26,7 +28,8 @@ const PlaceCard = ({
                 </View>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
-        </TouchableOpacity>
+        </Animated.View>
+
     );
 };
 
