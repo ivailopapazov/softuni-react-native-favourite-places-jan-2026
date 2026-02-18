@@ -30,6 +30,7 @@ export function AuthProvider({ children }) {
                     user: {
                         id: user.uid,
                         email: user.email,
+                        name: user.displayName,
                     }
                 });
             } else {
@@ -50,6 +51,7 @@ export function AuthProvider({ children }) {
                 user: {
                     id: user.uid,
                     email: user.email,
+                    name: user.displayName,
                 }
             });
         } catch (err) {
@@ -68,6 +70,7 @@ export function AuthProvider({ children }) {
                 user: {
                     id: user.uid,
                     email: user.email,
+                    name: user.displayName,
                 }
             });
         } catch (err) {
@@ -90,7 +93,7 @@ export function AuthProvider({ children }) {
         logout: async () => {
             try {
                 await signOut(auth);
-                
+
                 setAuthState({
                     user: null,
                 });
