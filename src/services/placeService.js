@@ -1,4 +1,6 @@
+import { collection, addDoc } from 'firebase/firestore'
 import { api } from "./api.js";
+import { db } from '../firebaseConfig.js';
 
 export async function getAll() {
     const result = await api.get('/places');
@@ -7,9 +9,11 @@ export async function getAll() {
 }
 
 export async function create(placeData) {
-    const result = await api.post('/places', placeData);
+    const ref = await addDoc(collection(db, 'places'), placeData);
 
-    return result.data;
+    console.log('Document written with ID: ', ref.id);
+    
+    return ref;
 }
 
 export async function getById(placeId) {
