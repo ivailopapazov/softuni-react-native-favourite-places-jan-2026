@@ -1,6 +1,7 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { authService } from "../../services/index.js";
-import { usePersistedState } from "../../hooks/usePersistedState.js";
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from "../../firebaseConfig.js";
 
 export const AuthContext = createContext({
     isLoading: false,
@@ -15,19 +16,41 @@ export const AuthContext = createContext({
 });
 
 export function AuthProvider({ children }) {
-    const [auth, setAuth] = usePersistedState("auth", {
-        accessToken: null,
+    const [authState, setAuthState] = useState({
         user: null,
     });
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setAuthState({
+                    user: {
+                        id: user.uid,
+                        email: user.email,
+                    }
+                });
+            } else {
+                setAuthState({ user: null });
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
     const login = async (email, password) => {
         try {
             setIsLoading(true);
-            const { user, accessToken } = await authService.login(email, password);
-            setAuth({ user, accessToken });
+            const user = await authService.login(email, password);
+
+            setAuthState({
+                user: {
+                    id: user.uid,
+                    email: user.email,
+                }
+            });
         } catch (err) {
             setError(err.message || 'An error occurred during login');
         } finally {
@@ -38,7 +61,7 @@ export function AuthProvider({ children }) {
         try {
             setIsLoading(true);
             const { user, accessToken } = await authService.register(email, password, name);
-            setAuth({ user, accessToken });
+            setAuthState({ user, accessToken });
         } catch (err) {
             setError(err.message || 'An error occurred during registration');
         }
@@ -48,22 +71,21 @@ export function AuthProvider({ children }) {
     }
 
     const contextValue = {
-        isAuthenticated: !!auth.user,
+        isAuthenticated: !!authState.user,
         isLoading,
         error,
-        user: auth.user,
-        auth,
+        user: authState.user,
+        auth: authState,
         clearError: () => setError(null),
         login,
         register,
         logout: () => {
-            setAuth({
-                accessToken: null,
+            setAuthState({
                 user: null,
             });
         },
     };
-    
+
     return (
         <AuthContext.Provider value={contextValue}>
             {children}
