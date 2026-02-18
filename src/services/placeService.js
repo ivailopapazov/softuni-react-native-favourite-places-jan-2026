@@ -1,6 +1,7 @@
-import { collection, addDoc, getDocs } from 'firebase/firestore'
+import { collection, addDoc, getDocs, getDoc, doc } from 'firebase/firestore'
 import { api } from "./api.js";
 import { db } from '../firebaseConfig.js';
+import { log } from 'firebase/firestore/pipelines';
 
 export async function getAll() {
     const result = await getDocs(collection(db, 'places'));
@@ -17,13 +18,17 @@ export async function create(placeData) {
 }
 
 export async function getById(placeId) {
-    const result = await api.get(`/places/${placeId}`);
+    // const result = await api.get(`/places/${placeId}`);
+    const result = await getDoc(doc(db, 'places', placeId));
 
-    return result.data;
+    log('getById result', result);
+
+    return { id: result.id, ...result.data() };
 }
 
 export async function deletePlace(placeId) {
     const result = await api.delete(`/places/${placeId}`);
+    
 
     return result.data;
 }

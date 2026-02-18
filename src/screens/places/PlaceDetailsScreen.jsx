@@ -5,17 +5,36 @@ import {
     ScrollView,
     Image,
     Dimensions,
+    ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
 import Button from '../../components/Button';
+import { usePlace } from '../../contexts/places/usePlaces.js';
+import { useEffect, useState } from 'react';
 
 const { width } = Dimensions.get('window');
 
 const PlaceDetailsScreen = ({ route, navigation }) => {
-    const { place } = route.params;
+    const { placeId } = route.params;
+    const { getPlaceById } = usePlace();
+    const [place, setPlace] = useState(null);
 
-    {/* loading overlay */ }
+    useEffect(() => {
+        const placeDetails = getPlaceById(placeId);
+        if (!placeDetails) {
+            navigation.goBack();
+        }
+
+        setPlace(placeDetails);
+    }, []);
+
+    if (!place) {
+        return (
+            <ActivityIndicator style={styles.loadingContainer} size="large" color="#6366f1" />
+        );
+    }
+
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             {/* TODO: Show image */}
