@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
         user: null,
     });
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -35,6 +35,7 @@ export function AuthProvider({ children }) {
             } else {
                 setAuthState({ user: null });
             }
+            setIsLoading(false);
         });
 
         return () => unsubscribe();
