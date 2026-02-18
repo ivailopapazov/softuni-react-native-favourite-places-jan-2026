@@ -1,19 +1,19 @@
-import { collection, addDoc } from 'firebase/firestore'
+import { collection, addDoc, getDocs } from 'firebase/firestore'
 import { api } from "./api.js";
 import { db } from '../firebaseConfig.js';
 
 export async function getAll() {
-    const result = await api.get('/places');
+    const result = await getDocs(collection(db, 'places'));
 
-    return result.data;
+    const places = result.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    return places;
 }
 
 export async function create(placeData) {
-    const ref = await addDoc(collection(db, 'places'), placeData);
+    const result = await addDoc(collection(db, 'places'), placeData);
 
-    console.log('Document written with ID: ', ref.id);
-    
-    return ref;
+    return { id: result.id, ...placeData };
 }
 
 export async function getById(placeId) {
